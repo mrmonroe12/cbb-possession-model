@@ -140,8 +140,9 @@ def summarize_possession(
     last_event = events[-1]
 
     # Compute total points scored
+    import math
     points = sum(
-        event.get('points_scored', 0) or 0
+        (event.get('points_scored', 0) or 0) if not (isinstance(event.get('points_scored'), float) and math.isnan(event.get('points_scored', 0))) else 0
         for event in events
     )
 
@@ -195,7 +196,7 @@ def summarize_possession(
         defensive_team_id=defensive_team_id,
         home_lineup=home_lineup,
         away_lineup=away_lineup,
-        points_scored=int(points),
+        points_scored=int(points) if not math.isnan(points) else 0,
         outcome_type=outcome_type,
         num_events=len(events),
         has_offensive_rebound=has_offensive_rebound,

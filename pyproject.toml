@@ -27,6 +27,9 @@ dev = [
     "seaborn",
 ]
 
+[tool.setuptools]
+packages = ["src", "src.data", "src.model", "src.training", "src.evaluation"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"

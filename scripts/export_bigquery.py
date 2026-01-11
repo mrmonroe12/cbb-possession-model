@@ -73,7 +73,8 @@ def get_export_query(seasons: Optional[List[int]] = None) -> str:
 def export_pbp_data(
     output_dir: Path,
     seasons: Optional[List[int]] = None,
-    format: str = 'parquet'
+    format: str = 'parquet',
+    project: Optional[str] = None
 ) -> None:
     """
     Export play-by-play data from BigQuery to local files.
@@ -82,12 +83,13 @@ def export_pbp_data(
         output_dir: Directory to save exported data
         seasons: List of seasons to export (e.g., [2013, 2014])
         format: Output format ('parquet' or 'csv')
+        project: GCP project ID to use for billing (can be any project you have access to)
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("Initializing BigQuery client...")
-    client = bigquery.Client()
+    client = bigquery.Client(project=project)
 
     print("Building export query...")
     query = get_export_query(seasons)
@@ -159,6 +161,12 @@ def main():
         default='parquet',
         help='Output file format'
     )
+    parser.add_argument(
+        '--project',
+        type=str,
+        default=None,
+        help='GCP project ID to use (optional, but recommended if you have permission issues)'
+    )
 
     args = parser.parse_args()
 
@@ -170,7 +178,8 @@ def main():
     export_pbp_data(
         output_dir=Path(args.output),
         seasons=seasons,
-        format=args.format
+        format=args.format,
+        project=args.project
     )
 
 
